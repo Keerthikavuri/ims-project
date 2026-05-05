@@ -1,0 +1,60 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: ims_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  postgres:
+    image: postgres:16
+    container_name: ims_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ims_db
+      POSTGRES_USER: ims_user
+      POSTGRES_PASSWORD: ims_pass
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: ims_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  backend:
+    build: ./backend
+    container_name: ims_backend
+    ports:
+      - "8000:8000"
+    environment:
+      MONGO_URI: mongodb://mongo:27017/ims_signals
+      POSTGRES_DSN: postgresql+asyncpg://ims_user:ims_pass@postgres:5432/ims_db
+      REDIS_URL: redis://redis:6379/0
+      RATE_LIMIT_PER_SECOND: "500"
+      DEBOUNCE_WINDOW_SECONDS: "10"
+      DEBOUNCE_THRESHOLD: "100"
+    depends_on:
+      - mongo
+      - postgres
+      - redis
+
+  frontend:
+    build: ./frontend
+    container_name: ims_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
+  pg_data:
+  redis_data:
