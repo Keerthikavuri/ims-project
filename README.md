@@ -138,6 +138,22 @@ python mock\_signals.py
 
 
 
+## RCA (Root Cause Analysis) Guide
+
+When closing an incident, submit RCA with the following details:
+
+| Field | Example Value |
+|-------|--------------|
+| Incident Start | Auto-filled from incident start time |
+| Incident End | Current time when resolved |
+| Root Cause Category | INFRA / CODE / CONFIG / NETWORK / HUMAN |
+| Fix Applied | Restarted the failed service and cleared memory leak |
+| Prevention Steps | Added monitoring alerts at 80% threshold and implemented auto-restart policy |
+
+> Important: RCA must be submitted before moving incident to CLOSED status. MTTR (Mean Time To Resolve) is automatically calculated upon closure.
+
+
+
 \## GitHub
 
 https://github.com/Keerthikavuri/ims-project
